@@ -1,0 +1,15 @@
+#!/bin/sh
+set -e
+# SPDX-License-Identifier: BSD
+
+printf "score\tadj\tscr_adj\tpid\tname\n"
+for pr in /proc/*
+do
+    [ -e "$pr/comm" ] || continue
+    pid="${pr#/proc/}"
+    name="$(cat "$pr/comm")"
+    adj="$(cat "$pr/oom_adj")"
+    score="$(cat "$pr/oom_score")"
+    score_adj="$(cat "$pr/oom_score_adj")"
+    printf "$score\t$adj\t$score_adj\t$pid\t%s\n" "$name"
+done | sort -n
